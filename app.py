@@ -34,28 +34,25 @@ def upload_file():
     form = PDFUploadForm()
     if form.validate_on_submit():
         file = form.file.data
-        
+
         if file and allowed_file(file.filename):
             # Sécuriser le nom du fichier
             filename = secure_filename(file.filename)
             filepath = os.path.join(app.config['UPLOAD_FOLDER'], filename)
-            
+
             # Sauvegarder le fichier
             file.save(filepath)
-            
+
             # Lire le fichier PDF et extraire le texte
             reader = PdfReader(filepath)
-            extracted_text = ""
-            for page in reader.pages:
-                extracted_text += page.extract_text()
-            
+            extracted_text = "".join(page.extract_text() for page in reader.pages)
             # Créer un fichier texte à partir de l'extraction
             txt_filename = filename.rsplit('.', 1)[0] + '.txt'
             txt_filepath = os.path.join(app.config['UPLOAD_FOLDER'], txt_filename)
-            
+
             with open(txt_filepath, 'w', encoding='utf-8') as txt_file:
                 txt_file.write(extracted_text)
-            
+
             try:
                 # Envoyer le fichier .txt à l'utilisateur
                 return send_file(txt_filepath, as_attachment=True)
@@ -65,8 +62,8 @@ def upload_file():
                     os.remove(filepath)
                 if os.path.exists(txt_filepath):
                     os.remove(txt_filepath)
-    
+
     return render_template('upload.html', form=form)
 
 if __name__ == '__main__':
-    app.run(debug=True)
+    app.run(debug=False)
