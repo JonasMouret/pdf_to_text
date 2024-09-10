@@ -4,15 +4,21 @@ FROM python:3.12.5-slim
 # Définir le répertoire de travail
 WORKDIR /app
 
+# Créer un utilisateur non-root
+RUN useradd -ms /bin/bash appuser
+
+# Changer d'utilisateur
+USER appuser
+
 # Copier les fichiers requirements.txt et installer les dépendances
-COPY requirements.txt requirements.txt
+COPY --chown=appuser:appuser requirements.txt requirements.txt
 RUN pip install --no-cache-dir -r requirements.txt
 
 # Copier tout le contenu de l'application dans le conteneur
-COPY . .
+COPY --chown=appuser:appuser . .
 
-# Exposer le port 5000 pour Flask
+# Exposer le port 5000 pour Gunicorn
 EXPOSE 5000
 
-# Commande pour démarrer l'application Flask
-CMD ["python", "app.py"]
+# Commande pour démarrer l'application Flask avec Gunicorn
+CMD ["gunicorn", "-w", "4", "-b", "0.0.0.0:5000", "app:app"]
