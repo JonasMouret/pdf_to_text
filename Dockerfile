@@ -18,7 +18,7 @@ RUN pip install --no-cache-dir -r requirements.txt
 COPY --chown=appuser:appuser . .
 
 # Exposer le port 5000 pour Gunicorn
-EXPOSE 5000
+EXPOSE 8080
 
 # Commande pour démarrer l'application Flask avec Gunicorn
-CMD ["gunicorn", "-w", "4", "-b", "0.0.0.0:5000", "app:app"]
+CMD ["gunicorn","--config", "gunicorn_config.py", "app:app"]
