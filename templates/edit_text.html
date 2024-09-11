@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Éditer le texte extrait</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gray-100 h-screen flex items-center justify-center">
+    <div class="bg-white p-8 rounded-lg shadow-lg w-full max-w-4xl">
+        <h1 class="text-2xl font-bold text-center text-gray-800">Éditer le texte extrait</h1>
+        <form id="pdfForm" method="post" action="/edit" class="space-y-4">
+            <!-- Ajout du jeton CSRF -->
+            <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+
+            <!-- Zone de texte pour éditer le contenu extrait -->
+            <textarea name="edited_text" rows="10" class="w-full p-4 text-gray-700 border rounded-lg">{{ text }}</textarea>
+            
+            <!-- Champ caché pour le nom du fichier -->
+            <input type="hidden" name="filename" value="{{ filename }}">
+            
+            <button type="submit" class="w-full bg-blue-500 text-white py-2 rounded-lg hover:bg-blue-600 transition duration-300" id="submitBtn">Télécharger en PDF</button>
+        </form>
+    </div>
+
+    <!-- JavaScript pour rediriger après téléchargement -->
+    <script>
+        document.getElementById('pdfForm').onsubmit = function() {
+            // Après l'envoi du formulaire (téléchargement du fichier PDF)
+            setTimeout(function() {
+                // Redirige vers la page d'accueil après 3 secondes
+                window.location.href = "/";
+            }, 3000);  // Délai de 3 secondes avant la redirection
+        };
+    </script>
+</body>
+</html>
